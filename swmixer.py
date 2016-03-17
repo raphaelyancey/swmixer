@@ -27,6 +27,10 @@ try:
 except:
     "MP3 streaming disabled"
 
+def Read24(s):
+    for i in range(0,len(s),3):
+        yield ord(s[i+2])*65536 + ord(s[i+1])*256 + ord(s[i])
+
 ginit = False
 gstereo = True
 gchunksize = 1024
@@ -274,6 +278,10 @@ class Sound:
             if wf.getsampwidth() == 2:
                 self.data = numpy.fromstring(''.join(data), 
                                              dtype=numpy.int16)
+            if wf.getsampwidth() == 3:
+                self.data = numpy.array(list(Read24(''.join(data))),
+                                             dtype=numpy.int16)
+                self.data = self.data / 16777216.0
             if wf.getsampwidth() == 4: 
                 self.data = numpy.fromstring(''.join(data), 
                                              dtype=numpy.int32)
