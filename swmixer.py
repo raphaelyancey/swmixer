@@ -610,7 +610,7 @@ def tick(extra=None):
     glock.release()
     odata = (b.astype(numpy.int16)).tostring()
     # yield rather than block, pyaudio doesn't release GIL
-    while gstream.get_write_available() < gchunksize: time.sleep(0.001)
+    while ginit and gstream.get_write_available() < gchunksize: time.sleep(0.001)
     gstream.write(odata, gchunksize)
 
 def init(samplerate=44100, chunksize=1024, stereo=True, microphone=False, input_device_index=None, output_device_index=None):
@@ -668,7 +668,7 @@ def start():
     """Start separate mixing thread"""
     global gthread
     def f():
-        while True:
+        while ginit:
             tick()
             time.sleep(0.001)
     gthread = thread.start_new_thread(f, ())
