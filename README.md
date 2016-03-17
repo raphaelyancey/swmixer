@@ -34,12 +34,6 @@ http://www.underbit.com/products/mad/
 http://spacepants.org/src/pymad/
 
 
-## DOWNLOAD
-
-A source distribution is available at PyPI:
-http://pypi.python.org/pypi/SWMixer
-
-
 ## INSTALLATION
 
 SWMixer is packaged as Python source using distutils.  To install,
