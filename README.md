@@ -1,5 +1,5 @@
-=SWMixer=
-==Advanced Realtime Software Mixer==
+# SWMixer
+## Advanced Realtime Software Mixer
 
 Copyright 2008, Nathan Whitehead 
 Released under the LGPL
@@ -16,48 +16,48 @@ save memory.  In addition, the mixer supports audio input during
 playback (if supported in pyaudio with your sound card).
 
 
-==REQUIREMENTS==
+## REQUIREMENTS
 
-PyAudio 0.2.0 (or more recent)
+* PyAudio 0.2.0 (or more recent)
 http://people.csail.mit.edu/hubert/pyaudio/
 
-NumPy 1.0 (or more recent)
+* NumPy 1.0 (or more recent)
 http://numpy.scipy.org/
 
 
 Optional for MP3 support:
 
-MPEG Audio Decoder (MAD)
+* MPEG Audio Decoder (MAD)
 http://www.underbit.com/products/mad/
 
-PyMAD bindings for MAD
+* PyMAD bindings for MAD
 http://spacepants.org/src/pymad/
 
 
-==DOWNLOAD==
+## DOWNLOAD
 
 A source distribution is available at PyPI:
 http://pypi.python.org/pypi/SWMixer
 
 
-==INSTALLATION==
+## INSTALLATION
 
 SWMixer is packaged as Python source using distutils.  To install,
 run the following command as root:
 
-python setup.py install
+    python setup.py install
 
 For more information and options about using distutils, read:
 http://docs.python.org/inst/inst.html
 
 
-==DOCUMENTATION==
+## DOCUMENTATION
 
 This README file along with the pydoc documentation in the doc/
 directory are the documentation for SWMixer.
 
 
-==HOW CAN IT POSSIBLY WORK IN PYTHON?==
+## HOW CAN IT POSSIBLY WORK IN PYTHON?
 
 Realtime mixing of sample data is done entirely in python using the
 high performance of array operations in NumPy.  Converting between
@@ -67,45 +67,42 @@ function of NumPy.  Simultaneous playback and recording is possibly
 using PyAudio.
 
 
-==EXAMPLES==
+## EXAMPLES
 
 See the pydoc documentation for details on all the functions and
 for all the options and default values.
 
 A very short example of using swmixer to play a sound.
 
-{{{
-import swmixer
-import time
+    import swmixer
+    import time
+    
+    swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
+    swmixer.start()
+    snd = swmixer.Sound("test1.wav")
+    snd.play()
+    time.sleep(2.0) #don't quit before we hear the sound!
 
-swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
-swmixer.start()
-snd = swmixer.Sound("test1.wav")
-snd.play()
-time.sleep(2.0) #don't quit before we hear the sound!
-}}}
 
 Here is an example showing some more options and how to control the
 sound after it starts playing.  
 
-{{{
-import swmixer 
-import time
+    import swmixer 
+    import time
 
-swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
-swmixer.start()
-snd = swmixer.Sound("test1.wav")
-chan = snd.play(fadein=22050) #fade in sound over 0.5 seconds
-time.sleep(1.0)
-# rewind 20000 samples now just for kicks
-chan.set_position(chan.get_position() - 20000)
-time.sleep(1.0)
-chan.stop()
-time.sleep(1.0)
-}}}
+    swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
+    swmixer.start()
+    snd = swmixer.Sound("test1.wav")
+    chan = snd.play(fadein=22050) #fade in sound over 0.5 seconds
+    time.sleep(1.0)
+    # rewind 20000 samples now just for kicks
+    chan.set_position(chan.get_position() - 20000)
+    time.sleep(1.0)
+    chan.stop()
+    time.sleep(1.0)
 
 
-==STREAMING==
+## STREAMING
 
 Normally sounds are loaded entirely into memory before playback
 begins.  For long sounds this might result in too much memory being
@@ -121,18 +118,18 @@ stereo.
 
 Here's a very simple example showing a streaming sound along with a
 regular sound.
-{{{
-import swmixer
-import time
 
-swmixer.init(samplerate=44100, chunksize=1024, stereo=True)
-swmixer.start()
-snd1 = swmixer.StreamingSound("Beat_77.mp3")
-snd2 = swmixer.Sound("test2.wav")
-snd1.play(volume=0.2)
-snd2.play()
-time.sleep(10.0) #don't quit before we hear the sound!
-}}}
+    import swmixer
+    import time
+
+    swmixer.init(samplerate=44100, chunksize=1024, stereo=True)
+    swmixer.start()
+    snd1 = swmixer.StreamingSound("Beat_77.mp3")
+    snd2 = swmixer.Sound("test2.wav")
+    snd1.play(volume=0.2)
+    snd2.play()
+    time.sleep(10.0) #don't quit before we hear the sound!
+
 
 StreamingSounds have most of the functionality of regular Sounds, but
 some operations are not allowed.  For example, WAV streams do not
@@ -143,7 +140,7 @@ do not.  (However WAV Sounds do have get_length()).
 You can have any number of StreamingSounds and Sounds playing at once.
 
 
-==EXPLICIT TICK INTERFACE==
+## EXPLICIT TICK INTERFACE
 
 Instead of calling swmixer.start() you may also call swmixer.tick() every
 frame in your main loop.  This gives you greater control over synchronizing
@@ -167,27 +164,25 @@ multiple of your audio framerate.
 Here is a silly example showing a moving green square with a
 background sound.  The square should move at 43 pixels / second.
 
-{{{
-import sys
-import swmixer
-import pygame
+    import sys
+    import swmixer
+    import pygame
 
-swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
-snd = swmixer.Sound("test1.wav")
-pygame.display.init()
-screen = pygame.display.set_mode((1024, 768))
+    swmixer.init(samplerate=44100, chunksize=1024, stereo=False)
+    snd = swmixer.Sound("test1.wav")
+    pygame.display.init()
+    screen = pygame.display.set_mode((1024, 768))
 
-snd.play()
-x = 0
-while True:
-      swmixer.tick()
-      x += 1
-      screen.fill((0, 0, 0))
-      pygame.draw.rect(screen, (0, 255, 0), (x, 100, 50, 50))
-      pygame.display.flip()
-      for evt in pygame.event.get():
-          if evt.type == pygame.QUIT: sys.exit()
-}}}
+    snd.play()
+    x = 0
+    while True:
+          swmixer.tick()
+          x += 1
+          screen.fill((0, 0, 0))
+          pygame.draw.rect(screen, (0, 255, 0), (x, 100, 50, 50))
+          pygame.display.flip()
+          for evt in pygame.event.get():
+              if evt.type == pygame.QUIT: sys.exit()
 
 You can also call swmixer.set_buffersize(size) at any time to change
 the buffer size and thus change the framerate.  Switching the buffer
@@ -197,7 +192,7 @@ size gets smaller you will have to call swmixer.tick() very quickly
 to avoid audio glitches.
 
 
-==RECORDING==
+## RECORDING
 
 To enable sound recording using the microphone, either pass
 microphone=True to swmixer.init() or call swmixer.microphone_on()
@@ -216,32 +211,30 @@ snd=swmixer.Sound(data=s)
 Here is an annoying example program that records and plays back
 data from the microphone while playing a test sound in the background.
 
-{{{
-import sys
-import swmixer
-import numpy
+    import sys
+    import swmixer
+    import numpy
 
-swmixer.init(samplerate=44100, chunksize=1024, stereo=False, microphone=True)
-snd = swmixer.Sound("test1.wav")
-snd.play(loops=-1)
+    swmixer.init(samplerate=44100, chunksize=1024, stereo=False, microphone=True)
+    snd = swmixer.Sound("test1.wav")
+    snd.play(loops=-1)
 
-micdata = []
-frame = 0
+    micdata = []
+    frame = 0
 
-while True:
-    swmixer.tick()
-    frame += 1
-    if frame < 50:
-        micdata = numpy.append(micdata, swmixer.get_microphone())
-    if frame == 50:
-        micsnd = swmixer.Sound(data=micdata)
-        micsnd.play()
-        micdata = []
-        frame = 0
-}}}
+    while True:
+        swmixer.tick()
+        frame += 1
+        if frame < 50:
+            micdata = numpy.append(micdata, swmixer.get_microphone())
+        if frame == 50:
+            micsnd = swmixer.Sound(data=micdata)
+            micsnd.play()
+            micdata = []
+            frame = 0
 
 
-==SWMIXER WITH PYGAME==
+## SWMIXER WITH PYGAME
 
 You can use swmixer as an almost drop-in replacement for pygame.mixer.
 You may want to do this for the following reasons:
@@ -271,25 +264,25 @@ is returned.  This Channel object is used to control playback of that
 particular instance of the Sound.
 
 
-==BUGS AND LIMITATIONS==
+## BUGS AND LIMITATIONS
 
-Always outputs in 16-bit mode.
+* Always outputs in 16-bit mode.
 
-Cannot deal with 24-bit WAV files, but CAN handle 32-bit ones
+* Cannot deal with 24-bit WAV files, but CAN handle 32-bit ones
 (limitation of NumPy).
 
-Resampling can be slow for longer files.
+* Resampling can be slow for longer files.
 
-Does not detect samplerates that differ from requested samplerates.
+* Does not detect samplerates that differ from requested samplerates.
 I.e.  if you request a rate your card cannot handle, you might get
 incorrect playback rates.
 
-Currently there is no way to limit the number of sounds mixed at once
+* Currently there is no way to limit the number of sounds mixed at once
 to prevent excessive CPU usage.
 
-No way to pan mono sounds to different positions in stereo output.
+* No way to pan mono sounds to different positions in stereo output.
 
-StreamingSounds may not be sample accurate for looping and setting
+* StreamingSounds may not be sample accurate for looping and setting
 position.
 
-Threading behavior may not be optimal on some platforms.
+* Threading behavior may not be optimal on some platforms.
