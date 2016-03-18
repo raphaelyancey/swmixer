@@ -262,9 +262,6 @@ particular instance of the Sound.
 
 * Always outputs in 16-bit mode.
 
-* Cannot deal with 24-bit WAV files, but CAN handle 32-bit ones
-(limitation of NumPy).
-
 * Resampling can be slow for longer files.
 
 * Does not detect samplerates that differ from requested samplerates.
