@@ -307,7 +307,7 @@ class Sound:
                 r = mf.read()
                 if r is None: break
                 data.append(r[:])
-            self.data = numpy.fromstring(''.join(data), dtype=numpy.int16)
+            self.data = numpy.fromstring(''.join(map(str, data)), dtype=numpy.int16)
             del(mf)
         if self.data is None:
             assert False
